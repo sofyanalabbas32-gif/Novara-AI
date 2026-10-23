@@ -28,7 +28,7 @@ app = FastAPI(title="Novara AI")
 # --------------------------------------------------
 
 GOOGLE_REDIRECT_URI = (
-    "https://novara-ai-reemaleed90-2026.fly.dev/auth/google/callback"
+    "https://novara-ai-1.onrender.com/auth/google/callback"
 )
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
@@ -76,11 +76,9 @@ def get_current_date() -> str:
     ).strftime("%d %B %Y")
 
 
-
 def needs_web_search(query: str) -> bool:
     query = query.lower().strip()
 
-    # Always search when the user explicitly asks to browse.
     explicit_search_phrases = (
         "search the web",
         "search online",
@@ -111,7 +109,6 @@ def needs_web_search(query: str) -> bool:
     if any(phrase in query for phrase in explicit_search_phrases):
         return True
 
-    # Search automatically for information that may have changed.
     current_information_phrases = (
         "right now",
         "currently",
@@ -143,8 +140,9 @@ def needs_web_search(query: str) -> bool:
         "2026",
     )
 
-    return any(phrase in query for phrase in current_information_phrases)
-
+    return any(
+        phrase in query for phrase in current_information_phrases
+    )
 
 
 def search_web(query: str) -> str:
@@ -182,11 +180,19 @@ def search_web(query: str) -> str:
         )
 
     except httpx.HTTPError as exc:
-        print(f"Tavily search request failed: {type(exc).__name__}")
-        return "Web search failed because the search service could not be reached."
+        print(
+            f"Tavily search request failed: {type(exc).__name__}"
+        )
+        return (
+            "Web search failed because the search service "
+            "could not be reached."
+        )
 
     except (ValueError, TypeError, KeyError) as exc:
-        print(f"Tavily response could not be processed: {type(exc).__name__}")
+        print(
+            "Tavily response could not be processed: "
+            f"{type(exc).__name__}"
+        )
         return "Web search returned an unreadable response."
 
 
@@ -209,7 +215,10 @@ def current_user(request: Request):
     user = request.session.get("user")
 
     if not user:
-        raise HTTPException(status_code=401, detail="Please sign in.")
+        raise HTTPException(
+            status_code=401,
+            detail="Please sign in.",
+        )
 
     return user
 
@@ -223,7 +232,10 @@ def owned_chat(db: Session, chat_id: str, user_id: str):
     )
 
     if chat is None:
-        raise HTTPException(status_code=404, detail="Chat not found.")
+        raise HTTPException(
+            status_code=404,
+            detail="Chat not found.",
+        )
 
     return chat
 
@@ -293,7 +305,9 @@ async def auth_callback(request: Request):
         ):
             raise HTTPException(
                 status_code=403,
-                detail="Use a Google account with a verified email address.",
+                detail=(
+                    "Use a Google account with a verified email address."
+                ),
             )
 
         request.session.clear()
@@ -310,8 +324,6 @@ async def auth_callback(request: Request):
         raise
 
     except Exception as exc:
-        # Log the exception type and message to help diagnose OAuth errors.
-        # Never print client secrets or access tokens.
         print(
             "Google sign-in failed: "
             f"{type(exc).__name__}: {str(exc)[:1000]}"
@@ -336,7 +348,7 @@ async def auth_callback(request: Request):
 @app.get("/logout")
 async def logout(request: Request):
     request.session.clear()
-    return RedirectResponse("/login", status_code=303)
+    return RedirectResponse("/login")
 
 
 # --------------------------------------------------
@@ -502,7 +514,11 @@ async def chat(request: Request, data: ChatRequest):
             db.refresh(saved_chat)
 
         else:
-            saved_chat = owned_chat(db, data.chat_id, user["id"])
+            saved_chat = owned_chat(
+                db,
+                data.chat_id,
+                user["id"],
+            )
 
             if saved_chat.title == "New conversation":
                 saved_chat.title = display_text[:197]
@@ -519,7 +535,6 @@ async def chat(request: Request, data: ChatRequest):
             )
         )
         db.commit()
-
 
         messages = [
             {
@@ -541,8 +556,6 @@ async def chat(request: Request, data: ChatRequest):
                 ),
             }
         ]
-
-
 
         previous_messages = db.scalars(
             select(ChatMessage)
@@ -570,7 +583,9 @@ async def chat(request: Request, data: ChatRequest):
                         "image_url": {"url": image_url},
                     },
                 ]
-                messages.append({"role": "user", "content": content})
+                messages.append(
+                    {"role": "user", "content": content}
+                )
 
             else:
                 content = item.content.replace(
@@ -655,7 +670,7 @@ async def chat(request: Request, data: ChatRequest):
         except Exception as exc:
             db.rollback()
             print(
-                f"Groq request failed: "
+                "Groq request failed: "
                 f"{type(exc).__name__}: {str(exc)[:1000]}"
             )
             raise HTTPException(
