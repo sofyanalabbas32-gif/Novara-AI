@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local database
+novara.db
+*.db
+
+# Signing keys and Android packages
+*.keystore
+*.jks
+*.apk
+*.aab
+*.idsig
+
+# Android and Gradle build files
+.gradle/
+build/
+app/build/
+
+# Fly.io configuration
+fly.toml

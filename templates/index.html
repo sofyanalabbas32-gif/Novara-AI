@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="/static/manifest.webmanifest">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080a16">
+    <title>Novara AI</title>
+    <link rel="stylesheet" href="/static/style.css?v=5">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="/">
+                <span class="brand-mark">✦</span>
+                <span>Novara <span class="gradient-text">AI</span></span>
+            </a>
+
+            <button class="new-chat" id="newChat">
+                <span>✎</span>
+                <span>New Chat</span>
+                <span class="shortcut">Ctrl + N</span>
+            </button>
+
+            <nav class="navigation">
+                <button class="nav-item active" data-page="home"><span>⌂</span> Home</button>
+                <button class="nav-item" data-page="explore"><span>◎</span> Explore</button>
+                <button class="nav-item" data-page="history"><span>◷</span> History</button>
+                <button class="nav-item" data-page="settings"><span>⚙</span> Settings</button>
+            </nav>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="recent-heading">
+                <span>RECENT CHATS</span>
+                <button id="addChat" aria-label="Add chat">+</button>
+            </div>
+
+            <div class="chat-list" id="chatList"></div>
+
+            <div class="upgrade-card">
+                <div class="upgrade-heading">
+                    <span class="upgrade-icon">♛</span>
+                    <strong>Upgrade to Pro</strong>
+                </div>
+                <p>Get more powerful models, faster responses and premium features.</p>
+                <button id="upgradeButton" class="upgrade-button">
+                    Upgrade Now <span>→</span>
+                </button>
+            </div>
+
+            <div class="profile">
+                <div class="avatar">N</div>
+                <div class="profile-info">
+                    <strong>Novara User</strong>
+                    <span>Free Plan</span>
+                </div>
+                <span class="profile-arrow">›</span>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="model-status">
+                    <button class="model-select" id="modelSelect">
+                        <span class="model-icon">✦</span>
+                        <span>GPT-4o Mini</span>
+                        <span>⌄</span>
+                    </button>
+                    <span class="online"><span></span> Online</span>
+                </div>
+
+                <div class="top-actions">
+                    <button id="searchButton" aria-label="Search">⌕</button>
+                    <button id="themeButton" aria-label="Toggle theme">☼</button>
+                    <button id="menuButton" aria-label="Toggle sidebar">☰</button>
+                </div>
+            </header>
+
+            <section class="conversation" id="conversation">
+                <div class="welcome" id="welcome">
+                    <div class="hero-icon"><span>✦</span></div>
+                    <h1>Welcome back to <span class="gradient-text">Novara AI</span></h1>
+
+                    <p class="welcome-subtitle">
+                        Your intelligent assistant for ideas, answers, coding, writing and more.
+                    </p>
+                    <p class="welcome-question">What would you like to explore today?</p>
+
+                    <div class="suggestions">
+                        <button class="suggestion-card" data-prompt="Give me some creative ideas for a project.">
+                            <span class="suggestion-icon">♧</span>
+                            <span class="suggestion-copy">
+                                <strong>Get Ideas</strong>
+                                <span>Brainstorm creative ideas,<br>projects or solutions.</span>
+                            </span>
+                            <span class="suggestion-arrow">→</span>
+                        </button>
+
+                        <button class="suggestion-card" data-prompt="Help me write and understand some code.">
+                            <span class="suggestion-icon code-icon">&lt;/&gt;</span>
+                            <span class="suggestion-copy">
+                                <strong>Write Code</strong>
+                                <span>Get help with programming,<br>debugging or explanations.</span>
+                            </span>
+                            <span class="suggestion-arrow">→</span>
+                        </button>
+
+                        <button class="suggestion-card" data-prompt="Help me summarise a long text clearly.">
+                            <span class="suggestion-icon">▤</span>
+                            <span class="suggestion-copy">
+                                <strong>Summarize</strong>
+                                <span>Turn long text into clear,<br>concise summaries.</span>
+                            </span>
+                            <span class="suggestion-arrow">→</span>
+                        </button>
+
+                        <button class="suggestion-card" data-prompt="Teach me something interesting step by step.">
+                            <span class="suggestion-icon">♧</span>
+                            <span class="suggestion-copy">
+                                <strong>Learn Something</strong>
+                                <span>Explore new topics and<br>get step-by-step guidance.</span>
+                            </span>
+                            <span class="suggestion-arrow">→</span>
+                        </button>
+
+                        <button class="suggestion-card" data-prompt="Help me improve and edit a piece of writing.">
+                            <span class="suggestion-icon">✎</span>
+                            <span class="suggestion-copy">
+                                <strong>Write &amp; Edit</strong>
+                                <span>Improve your writing,<br>get feedback or rewrite.</span>
+                            </span>
+                            <span class="suggestion-arrow">→</span>
+                        </button>
+
+                        <button class="suggestion-card" data-prompt="Help me create a practical plan and organise my tasks.">
+                            <span class="suggestion-icon">✧</span>
+                            <span class="suggestion-copy">
+                                <strong>Plan &amp; Organize</strong>
+                                <span>Create plans, set goals<br>and stay productive.</span>
+                            </span>
+                            <span class="suggestion-arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="messages" id="messages"></div>
+            </section>
+
+            <footer class="composer-area">
+                <form class="composer" id="chatForm">
+                    <button
+                        class="attach-button"
+                        type="button"
+                        id="attachButton"
+                        aria-label="Attach file"
+                    >♧</button>
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        hidden
+                    >
+
+                    <div class="composer-divider"></div>
+
+                    <textarea
+                        id="messageInput"
+                        rows="1"
+                        placeholder="Type your message here..."
+                        aria-label="Message"
+                    ></textarea>
+
+
+<div class="voice-controls">
+    <div id="recordingWave" class="recording-wave" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <span id="recordingStatus" class="recording-status" aria-live="polite"></span>
+
+    <button
+        type="button"
+        id="voiceButton"
+        class="icon-button"
+        title="Start voice input"
+        aria-label="Start voice input"
+    >
+        <svg width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+            <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+            <path d="M5 10a7 7 0 0 0 14 0"></path>
+            <path d="M12 17v5M8 22h8"></path>
+        </svg>
+    </button>
+
+    <select id="voiceLanguage" class="voice-language"
+            aria-label="Voice input language">
+        <option value="en-GB">English UK</option>
+        <option value="en-US">English US</option>
+        <option value="ar-SA">Arabic</option>
+        <option value="fr-FR">French</option>
+        <option value="es-ES">Spanish</option>
+        <option value="de-DE">German</option>
+        <option value="it-IT">Italian</option>
+        <option value="pt-PT">Portuguese</option>
+        <option value="tr-TR">Turkish</option>
+        <option value="ur-PK">Urdu</option>
+        <option value="hi-IN">Hindi</option>
+        <option value="zh-CN">Chinese</option>
+    </select>
+</div>
+
+                        <button
+                            type="button"
+                            id="voiceButton"
+                            class="icon-button"
+                            title="Start voice input"
+                            aria-label="Start voice input"
+                        >
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+                                <path d="M5 10a7 7 0 0 0 14 0"></path>
+                                <path d="M12 17v5M8 22h8"></path>
+                            </svg>
+                        </button>
+
+                        <select
+                            id="voiceLanguage"
+                            class="voice-language"
+                            aria-label="Voice input language"
+                            title="Voice input language"
+                        >
+                            <option value="en-GB">English UK</option>
+                            <option value="en-US">English US</option>
+                            <option value="ar-SA">Arabic</option>
+                            <option value="fr-FR">French</option>
+                            <option value="es-ES">Spanish</option>
+                            <option value="de-DE">German</option>
+                            <option value="it-IT">Italian</option>
+                            <option value="pt-PT">Portuguese</option>
+                            <option value="tr-TR">Turkish</option>
+                            <option value="ur-PK">Urdu</option>
+                            <option value="hi-IN">Hindi</option>
+                            <option value="zh-CN">Chinese</option>
+                        </select>
+                    </div>
+
+                    <button
+                        class="send-button"
+                        id="sendButton"
+                        type="submit"
+                        aria-label="Send message"
+                    >➤</button>
+                </form>
+
+                <div class="powered">
+                    ⬟ &nbsp;Powered by OpenRouter <span>•</span> GPT-4o Mini
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- PRICING MODAL -->
+    <div class="pricing-overlay" id="pricingModal" aria-hidden="true">
+        <section
+            class="pricing-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pricingTitle"
+        >
+            <button
+                class="pricing-close"
+                id="closePricing"
+                type="button"
+                aria-label="Close pricing"
+            >×</button>
+
+            <div class="pricing-header">
+                <span class="pricing-eyebrow">NOVARA AI PLANS</span>
+                <h2 id="pricingTitle">Choose your experience</h2>
+                <p>Start for free or unlock more with Novara AI.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <article class="plan-card">
+                    <div class="plan-name">FREE</div>
+                    <h3>Try Novara-AI</h3>
+                    <p class="plan-description">
+                        See how AI can help find answers, explore ideas, and get things done in life and work.
+                    </p>
+                    <div class="plan-price">£0 <span>/ month</span></div>
+                    <ul class="plan-features">
+                        <li>✓ Unlimited everyday text chats</li>
+                        <li>✓ Limited access to image creation</li>
+                        <li>✓ Limited memory and storage</li>
+                        <li>✓ Limited voice chats</li>
+                        <li>✓ Ad supported</li>
+                    </ul>
+                    <button class="plan-action free-action" id="freePlanButton" type="button">
+                        Continue with Free
+                    </button>
+                </article>
+
+                <article class="plan-card plus-card">
+                    <div class="recommended-label">✦ YOUR AI ASSISTANT</div>
+                    <div class="plan-name">PLUS</div>
+                    <h3>Your AI assistant</h3>
+                    <p class="plan-description">
+                        Unlock advanced intelligence that adapts to your preferences the more you use it.
+                    </p>
+                    <div class="plan-price">£20 <span>/ month</span></div>
+                    <ul class="plan-features">
+                        <li>✓ Advanced intelligence for complex work</li>
+                        <li>✓ Higher quality image creation</li>
+                        <li>✓ Work agent to act across apps and files</li>
+                        <li>✓ Codex to automate coding</li>
+                        <li>✓ Expanded memory and 20 GB of storage</li>
+                        <li>✓ Email and calendar connections</li>
+                        <li>✓ Larger projects to organise your work</li>
+                        <li>✓ Tools for personal finance and data analysis</li>
+                        <li>✓ No ads</li>
+                    </ul>
+                    <button class="plan-action plus-action" id="subscribeButton" type="button">
+                        Subscribe for £20/month →
+                    </button>
+                </article>
+            </div>
+
+            <p class="pricing-footnote">
+                Subscription features depend on what is currently available in Novara AI.
+            </p>
+        </section>
+    </div>
+
+    <script src="/static/script.js?v=5"></script>
+</body>
+</html>

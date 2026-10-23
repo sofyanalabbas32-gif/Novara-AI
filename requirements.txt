@@ -1,0 +1,13 @@
+
+fastapi
+uvicorn[standard]
+jinja2
+python-dotenv
+openai
+sqlalchemy
+httpx
+python-multipart
+tzdata
+authlib
+itsdangerous
+uvicorn
